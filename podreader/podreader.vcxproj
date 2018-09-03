@@ -118,7 +118,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\json\json.hxx" />
+    <ClInclude Include="jsonreader.hxx" />
+    <ClInclude Include="src\json\value.hxx" />
     <ClInclude Include="src\json\operator.hxx" />
     <ClInclude Include="src\meta\meta.hxx" />
     <ClInclude Include="src\meta\pod.hxx" />

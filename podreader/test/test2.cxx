@@ -1,5 +1,4 @@
-#include <json/json.hxx>
-#include <json/operator.hxx>
+#include <json/jsonreader.hxx>
 
 #include <fstream>
 
@@ -19,12 +18,8 @@ struct two
 
 int main()
 {
-	using namespace podreader::json::operator_overloads;
 
-	std::ifstream test2json("test2.json");
-	two pod_struct;
-
-	test2json >> pod_struct;
+	podreader::json::jsonreader<two> reader("test2.json");
 
 	return 0;
 }
