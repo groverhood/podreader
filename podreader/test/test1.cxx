@@ -57,10 +57,6 @@ static std::ostream& operator<<(std::ostream& out, const podreader::meta::type_d
 
 int main()
 {
-	struct t
-	{
-		int i;
-	};
 	using namespace podreader::meta;
 
 	constexpr type_data td = get_type_data<foo>::value;

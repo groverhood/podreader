@@ -29,6 +29,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="test\test3.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="test\test1.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>

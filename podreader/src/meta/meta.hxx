@@ -1,3 +1,4 @@
+#pragma once
 
 #include <type_traits>
 #include <utility>
@@ -87,6 +88,8 @@ namespace meta
 
 		STL size_t num_members = 0;
 
+		STL size_t align_of = 0;
+
 		const type_data *children = nullptr;
 
 		constexpr type_data() noexcept = default;
@@ -154,7 +157,9 @@ namespace meta
 				typename_of<T>(),
 				true,
 				false,
-				0
+				sizeof(T),
+				0,
+				alignof(T)
 			}
 		};
 	};
@@ -175,7 +180,9 @@ namespace meta
 			type_data_ref.is_pod = STL is_pod<U>::value;
 			type_data_ref.is_struct = STL is_class<U>::value;
 			type_data_ref.num_members = num_members<U>::value;
+			type_data_ref.size_of = sizeof(U);
 			type_data_ref.children = get_member_info<U>::values.data();
+			type_data_ref.align_of = alignof(U);
 
 			return U{};
 		}
@@ -191,9 +198,13 @@ namespace meta
 			STL is_class<T>::value,
 			sizeof (T),
 			num_members<T>::value,
+			alignof (T),
 			get_member_info<T>::values.data()
 		};
 	};
+
 }
 
 }
+
+#define typeof(t) (podreader::meta::get_type_data<t>::value)
