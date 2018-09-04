@@ -3,8 +3,6 @@
 #include <meta/meta.hxx>
 #include <utility>
 
-
-
 namespace podreader
 {
 	using meta::type_data;
@@ -74,7 +72,7 @@ namespace podreader
 
 			inline ~value()
 			{
-				if (!moved && !reference) delete[] bytes;
+				if (!moved && !reference && bytes) delete[] bytes;
 			}
 
 			template <typename T>
@@ -126,6 +124,11 @@ namespace podreader
 			// attribute getter
 			inline value operator[](std::size_t index)
 			{
+				if (bytes == nullptr)
+				{
+					bytes = new unsigned char[type.size_of];
+				}
+
 				value val = value(type.children[index]);
 
 				// view only

@@ -1,8 +1,7 @@
 #pragma once
 
 #include <meta/meta.hxx>
-#include <json/json.hxx>
-
+#include <json/jsonreader.hxx>
 
 namespace podreader
 {
@@ -17,7 +16,10 @@ namespace podreader
 					  typename Enable = typename ::std::enable_if<::std::is_pod<T>::value && ::std::is_class<T>::value>::type>
 			STL istream& operator>>(::std::istream& in, T& out)
 			{
-				return read_struct(in, out);
+				podreader::json::jsonreader<T> r = podreader::json::jsonreader<T>(in);
+				out = r.result_of();
+
+				return in;
 			}
 
 

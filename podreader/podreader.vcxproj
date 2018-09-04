@@ -125,9 +125,7 @@
     <ClInclude Include="src\meta\pod.hxx" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="test\test1.cxx" />
     <ClCompile Include="test\test2.cxx" />
-    <ClCompile Include="test\test3.cxx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="test\data\test2.json" />

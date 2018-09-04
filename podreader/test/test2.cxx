@@ -14,12 +14,19 @@ struct two
 	foo f2;
 
 	int foo_rating;
+
+
 };
 
 int main()
 {
+	using namespace podreader::json::operator_overloads;
 
-	podreader::json::jsonreader<two> reader("test2.json");
+	std::ifstream inf("test2.json");
+
+	foo f = {};
+
+	inf >> f;
 
 	return 0;
 }

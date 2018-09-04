@@ -130,7 +130,7 @@ namespace podreader
 		{
 		public:
 
-			static constexpr meta::type_data& type = typeof(T);
+			static constexpr const meta::type_data& type = typeof(T);
 
 		private:
 
@@ -166,17 +166,24 @@ namespace podreader
 
 			void evaluate_intern(value &val)
 			{
+				if (!val.type_of().is_struct) evaluate_raw(val);
 
+				else
+				{
+					const type_data& typeinfo = val.type_of();
+
+					
+				}
 			}
 
 		public:
 
 			void evaluate()
 			{
-		
+				evaluate_intern(result);
 			}
 
-			value& result_of() noexcept
+			T result_of() noexcept
 			{
 				if (!set) evaluate();
 
