@@ -18,13 +18,13 @@
     <ClInclude Include="src\meta\meta.hxx">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\meta\pod.hxx">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\json\value.hxx">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="jsonreader.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="operator.hxx">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

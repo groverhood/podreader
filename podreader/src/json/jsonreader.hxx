@@ -127,7 +127,7 @@ namespace podreader
 		}
 
 
-		template <typename T, typename Enable = typename std::enable_if<std::is_pod<T>::value && std::is_class<T>::value>::type>
+		template <typename T, typename Enable = typename std::enable_if<std::is_pod<T>::value and std::is_class<T>::value>::type>
 		class jsonreader
 		{
 		public:
@@ -136,20 +136,18 @@ namespace podreader
 
 		private:
 
-			std::ifstream stream;
+			std::istream &stream;
 			value result;
 
 			bool set;
 
 		public:
 
-
-			explicit jsonreader(const std::string &filepath)
-				: stream(filepath),
+			explicit jsonreader(std::istream &stream)
+				: stream(stream),
 				result(type),
 				set(false)
-			{
-			}
+			{}
 
 		private:
 
@@ -182,7 +180,7 @@ namespace podreader
 
 			void evaluate()
 			{
-				if (result.valueless()) result.zeroset_unsafe();
+				result.zeroset();
 
 				evaluate_intern(result);
 			}

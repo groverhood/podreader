@@ -1,4 +1,5 @@
 #include <json/jsonreader.hxx>
+#include <json/operator.hxx>
 #include <fstream>
 
 struct foo
@@ -13,13 +14,15 @@ struct two
 	foo f2;
 
 	int foo_rating;
+	double fuck;
+	short nice;
 };
 
 int main()
 {
-	using namespace podreader;
-	json::value;
-	json::jsonreader<two> reader("test/data/test2.json");
+	using namespace podreader::json::;
+
+	
 
 	two val = reader.result_of();
 

@@ -30,6 +30,7 @@ namespace podreader
 			unsigned char *bytes;
 
 			const type_data& type;
+			std::size_t align;
 
 		public:
 
@@ -37,8 +38,8 @@ namespace podreader
 			value(const T& val)
 				: moved(false),
 				bytes(detail::value_to_bytes(val, STL make_index_sequence<sizeof val>{})),
-				type(get_type_data<T>::value)
-
+				type(get_type_data<T>::value),
+				align(type.align_of)
 			{
 			}
 
@@ -46,7 +47,8 @@ namespace podreader
 				: moved(false),
 				reference(other.reference),
 				bytes(reinterpret_cast<unsigned char*>(std::memcpy(new unsigned char[other.type.size_of], other.bytes, other.type.size_of))),
-				type(other.type)
+				type(other.type),
+				align(other.type.align_of)
 			{
 
 			}
@@ -56,7 +58,8 @@ namespace podreader
 				: moved(false),
 				reference(other.reference),
 				bytes(other.bytes),
-				type(other.type)
+				type(other.type),
+				align(other.type.align_of)
 			{
 				other.moved = true;
 			}
@@ -65,7 +68,8 @@ namespace podreader
 				value(const type_data& type)
 				: moved(false),
 				bytes(nullptr),
-				type(type)
+				type(type),
+				align(type.align_of)
 			{
 
 			}
@@ -126,14 +130,20 @@ namespace podreader
 				return !bytes;
 			}
 
-			inline void zeroset_unsafe()
+			inline void zeroset()
 			{
-				bytes = new unsigned char[type.size_of]{ 0 };
+				if (valueless()) bytes = new unsigned char[type.size_of]{ 0 };
 			}
 
 			// attribute getter
 			inline value operator[](std::size_t index)
 			{
+				if (!type.is_struct)
+				{
+					value *val = nullptr;
+					return *val;
+				}
+
 				if (bytes == nullptr)
 				{
 					bytes = new unsigned char[type.size_of];
@@ -144,7 +154,12 @@ namespace podreader
 				// view only
 				val.reference = true;
 
-				std::size_t offset = type.align_of * index;
+				std::size_t offset = 0;
+
+				for (std::size_t n = 0; n < index; ++n)
+				{
+					offset += std::max(type.children[n].size_of, type.align_of);
+				}
 
 				val.bytes = bytes + offset;
 

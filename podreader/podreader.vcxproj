@@ -119,9 +119,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="jsonreader.hxx" />
+    <ClInclude Include="operator.hxx" />
     <ClInclude Include="src\json\value.hxx" />
     <ClInclude Include="src\meta\meta.hxx" />
-    <ClInclude Include="src\meta\pod.hxx" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test\test2.cxx" />
