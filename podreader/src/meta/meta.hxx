@@ -207,6 +207,7 @@ namespace meta
 			typename_of<T>(),
 			STL is_pod<T>::value,
 			STL is_class<T>::value,
+			STL is_array<T>::value,
 			sizeof (T),
 			num_members<T>::value,
 			alignof (T),

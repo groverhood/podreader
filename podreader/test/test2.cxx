@@ -19,6 +19,8 @@ struct two
 
 };
 
+#include <any>
+
 int main()
 {
 	using namespace podreader::json::operator_overloads;
