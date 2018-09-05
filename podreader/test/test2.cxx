@@ -18,7 +18,7 @@ struct two
 int main()
 {
 	using namespace podreader;
-
+	json::value;
 	json::jsonreader<two> reader("test/data/test2.json");
 
 	two val = reader.result_of();

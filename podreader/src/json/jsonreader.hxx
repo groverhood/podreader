@@ -124,8 +124,6 @@ namespace podreader
 				return is;
 			}
 
-#undef templates_xD
-
 		}
 
 
