@@ -4,6 +4,7 @@
 #include <istream>
 #include <ostream>
 #include <fstream>
+#include <string>
 
 namespace podreader
 {
@@ -12,12 +13,14 @@ namespace podreader
 		namespace detail
 		{
 
-#define templates_xD(T, stream, val)\
-			T t;\
-			is >> t;\
-			\
-			val = t;\
-			return is\
+			template <typename T>
+			inline std::istream& read_v(std::istream& is, value& val)
+			{
+				T t;
+				is >> t;
+				val = t;
+				return is;
+			}
 
 			inline std::istream& read_T(std::istream& is, value& val)
 			{
@@ -25,97 +28,97 @@ namespace podreader
 
 				if (type == typeof(bool))
 				{
-					templates_xD(bool, is, val);
+					return read_v<bool>(is, val);
 				}
 
 				if (type == typeof(signed char))
 				{
-					templates_xD(signed char, is, val);
+					return read_v<signed char>(is, val);
 				}
 
 				if (type == typeof(unsigned char))
 				{
-					templates_xD(unsigned char, is, val);
+					return read_v<unsigned char>(is, val);
 				}
 
 				if (type == typeof(char))
 				{
-					templates_xD(char, is, val);
+					return read_v<char>(is, val);
 				}
 
 				if (type == typeof(int))
 				{
-					templates_xD(int, is, val);
+					return read_v<int>(is, val);
 				}
 
 				if (type == typeof(unsigned int))
 				{
-					templates_xD(unsigned int, is, val);
+					return read_v<unsigned int>(is, val);
 				}
 
 				if (type == typeof(signed int))
 				{
-					templates_xD(signed int, is, val);
+					return read_v<signed int>(is, val);
 				}
 
 				if (type == typeof(short int))
 				{
-					templates_xD(short int, is, val);
+					return read_v<short int>(is, val);
 				}
 
 				if (type == typeof(unsigned short int))
 				{
-					templates_xD(unsigned short int, is, val);
+					return read_v<unsigned short int>(is, val);
 				}
 
 				if (type == typeof(signed short int))
 				{
-					templates_xD(signed short int, is, val);
+					return read_v<signed short int>(is, val);
 				}
 
 				if (type == typeof(long int))
 				{
-					templates_xD(long int, is, val);
+					return read_v<long int>(is, val);
 				}
 
 				if (type == typeof(unsigned long int))
 				{
-					templates_xD(unsigned long int, is, val);
+					return read_v<unsigned long int>(is, val);
 				}
 
 				if (type == typeof(signed long int))
 				{
-					templates_xD(signed long int, is, val);
+					return read_v<signed long int>(is, val);
 				}
 
 				if (type == typeof(long long int))
 				{
-					templates_xD(long long int, is, val);
+					return read_v<long long int>(is, val);
 				}
 
 				if (type == typeof(unsigned long long int))
 				{
-					templates_xD(unsigned long long int, is, val);
+					return read_v<unsigned long long int>(is, val);
 				}
 
 				if (type == typeof(signed long long int))
 				{
-					templates_xD(signed long long int, is, val);
+					return read_v<signed long long int>(is, val);
 				}
 
 				if (type == typeof(float))
 				{
-					templates_xD(float, is, val);
+					return read_v<float>(is, val);
 				}
 
 				if (type == typeof(double))
 				{
-					templates_xD(double, is, val);
+					return read_v<double>(is, val);
 				}
 
 				if (type == typeof(long double))
 				{
-					templates_xD(long double, is, val);
+					return read_v<long double>(is, val);
 				}
 
 				return is;
@@ -124,6 +127,7 @@ namespace podreader
 #undef templates_xD
 
 		}
+
 
 		template <typename T, typename Enable = typename std::enable_if<std::is_pod<T>::value && std::is_class<T>::value>::type>
 		class jsonreader
@@ -134,24 +138,18 @@ namespace podreader
 
 		private:
 
-			std::istream stream;
+			std::ifstream stream;
 			value result;
 
 			bool set;
 
 		public:
 
-			explicit jsonreader(std::istream &stream)
-				: stream(stream.rdbuf()),
-				  result(type),
-				  set(false)
-			{
-			}
 
-			explicit jsonreader(const std::string &filename)
-				: stream(std::ifstream(filename).rdbuf()),
-				  result(type),
-				  set(false)
+			explicit jsonreader(const std::string &filepath)
+				: stream(filepath),
+				result(type),
+				set(false)
 			{
 			}
 
@@ -161,7 +159,7 @@ namespace podreader
 
 			void evaluate_raw(value &val)
 			{
-
+				detail::read_T(stream, val);
 			}
 
 			void evaluate_intern(value &val)
@@ -172,7 +170,13 @@ namespace podreader
 				{
 					const type_data& typeinfo = val.type_of();
 
-					
+					for (std::size_t n = 0; n < typeinfo.num_members; ++n)
+					{
+						std::string s;
+						std::getline(stream, s, ':');
+						value v = val[n];
+						evaluate_intern(v);
+					}
 				}
 			}
 
@@ -180,6 +184,8 @@ namespace podreader
 
 			void evaluate()
 			{
+				if (result.valueless()) result.zeroset_unsafe();
+
 				evaluate_intern(result);
 			}
 

@@ -121,6 +121,16 @@ namespace podreader
 				}
 			}
 
+			inline bool valueless() const noexcept
+			{
+				return !bytes;
+			}
+
+			inline void zeroset_unsafe()
+			{
+				bytes = new unsigned char[type.size_of]{ 0 };
+			}
+
 			// attribute getter
 			inline value operator[](std::size_t index)
 			{
@@ -154,6 +164,3 @@ namespace podreader
 
 	}
 }
-
-
-#include <json/operator.hxx>
