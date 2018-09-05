@@ -22,6 +22,8 @@ namespace podreader
 				return is;
 			}
 
+			
+
 			inline std::istream& read_T(std::istream& is, value& val)
 			{
 				const type_data& type = val.type_of();
@@ -168,6 +170,11 @@ namespace podreader
 
 					for (std::size_t n = 0; n < typeinfo.num_members; ++n)
 					{
+						if (n == 5)
+						{
+							int j = 2;
+						}
+
 						std::string s;
 						std::getline(stream, s, ':');
 						value v = val[n];

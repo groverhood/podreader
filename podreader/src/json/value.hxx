@@ -26,6 +26,7 @@ namespace podreader
 
 			bool moved;
 			bool reference = false;
+			bool string = false;
 
 			unsigned char *bytes;
 
@@ -175,6 +176,8 @@ namespace podreader
 
 				return *this;
 			}
+
+
 		};
 
 	}

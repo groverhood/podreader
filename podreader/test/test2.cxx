@@ -16,6 +16,8 @@ struct two
 	int foo_rating;
 	double fuck;
 	short nice;
+
+	const char* s;
 };
 
 int main()

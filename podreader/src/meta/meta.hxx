@@ -23,6 +23,8 @@ namespace meta
 	  */
 	namespace detail
 	{
+		
+
 		template <STL size_t N>
 		struct auto_cast_t
 		{
@@ -57,6 +59,11 @@ namespace meta
 		}
 	}
 	
+	namespace detail
+	{
+		template <typename T>
+		using remove_cvr_t = typename std::remove_reference<typename std::remove_cv<T>::type>::type;
+	}
 
 	template <typename T, typename Enable = typename STL enable_if<STL is_pod<T>::value>::type>
 	struct num_members
