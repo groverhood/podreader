@@ -91,6 +91,8 @@ namespace meta
 
 		bool is_struct = false;
 
+		bool is_array = false;
+
 		STL size_t size_of = 0;
 
 		STL size_t num_members = 0;
@@ -164,6 +166,7 @@ namespace meta
 				typename_of<T>(),
 				true,
 				false,
+				false,
 				sizeof(T),
 				0,
 				alignof(T)
@@ -186,6 +189,7 @@ namespace meta
 			type_data_ref.type_name = typename_of<U>();
 			type_data_ref.is_pod = STL is_pod<U>::value;
 			type_data_ref.is_struct = STL is_class<U>::value;
+			type_data_ref.is_array = STL is_array<U>::value;
 			type_data_ref.num_members = num_members<U>::value;
 			type_data_ref.size_of = sizeof(U);
 			type_data_ref.children = get_member_info<U>::values.data();

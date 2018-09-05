@@ -17,7 +17,6 @@ struct two
 	double fuck;
 	short nice;
 
-	const char* s;
 };
 
 int main()
