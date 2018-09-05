@@ -20,11 +20,13 @@ struct two
 
 int main()
 {
-	using namespace podreader::json::;
+	using namespace podreader::json::operator_overloads;
 
-	
+	two val;
 
-	two val = reader.result_of();
+	std::ifstream filestream("test/data/test2.json");
+
+	filestream >> val;
 
 	return 0;
 }
