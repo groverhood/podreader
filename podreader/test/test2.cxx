@@ -14,7 +14,7 @@ struct two
 	foo f2;
 
 	int foo_rating;
-	double fuck;
+	double tuck;
 	short nice;
 
 };
