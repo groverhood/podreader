@@ -21,6 +21,7 @@ struct two
 };
 
 #include <any>
+#include <iostream>
 
 int main()
 {
@@ -28,7 +29,7 @@ int main()
 
 	two val;
 
-	std::ifstream filestream("../test/data/test2.json");
+	std::ifstream filestream("./data/test2.json");
 
 	filestream >> val;
 
