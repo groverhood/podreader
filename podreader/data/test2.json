@@ -13,5 +13,6 @@
   "tuck": 12,
   "nice": 2,
 
-  "condition":  true
+  "condition": true,
+  "strang":  "Hello, world!"
 }
