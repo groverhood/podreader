@@ -179,6 +179,7 @@ namespace meta
 			}
 		};
 	};
+	
 
 	template <typename T, typename Enable = typename STL enable_if<STL is_aggregate<T>::value>::type>
 	struct get_member_info

@@ -61,7 +61,12 @@ namespace podreader
         {
             string result;
 
-            result.string_impl = new unsigned char[str.length() + sizeof(std::size_t)];
+			result.string_impl = new unsigned char[str.length() + 1 + sizeof(std::size_t)]{ 0 };
+
+			char* strbytes = reinterpret_cast<char*>(result.string_impl) + sizeof(std::size_t);
+			std::memcpy(strbytes, str.c_str(), str.length());
+
+			*reinterpret_cast<std::size_t*>(result.string_impl) = str.length();
 
             return result;
         }

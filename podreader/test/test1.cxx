@@ -59,9 +59,7 @@ int main()
 {
 	using namespace podreader::meta;
 
-	auto str = typename_of<int>();
-
-	type_data td = get_type_data<foo>::value;
+	constexpr type_data const& td = get_type_data<foo>::value;
 
 	std::cout << td << std::endl;
 
