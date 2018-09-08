@@ -30,7 +30,6 @@ int main()
 
 	std::ifstream filestream("test/data/test2.json");
 
-
 	filestream >> val;
 
 	return 0;
