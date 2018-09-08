@@ -17,10 +17,8 @@ struct two
 	double tuck;
 	short nice;
 	bool condition;
-
 };
 
-#include <any>
 #include <iostream>
 
 int main()

@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <type_traits>
+#include <string>
 
 namespace podreader
 {
@@ -13,6 +14,14 @@ namespace podreader
 			void* string_impl;
 
 			string() = default;
+
+			inline ~string()
+            {
+                if (string_impl)
+                {
+                    delete[] reinterpret_cast<unsigned char*>(string_impl);
+                }
+            }
 
 			inline std::size_t length() const
 			{
@@ -48,7 +57,12 @@ namespace podreader
 			}
 		};
 
+        string make_string(const std::string &str)
+        {
+            string result;
 
+            result.string_impl = new unsigned char[str.length() + sizeof(std::size_t)];
+        }
 
 
 
