@@ -29,6 +29,13 @@ int main()
 
 	constexpr auto td = typeof(two);
 
+	constexpr auto tdf1 = td.children[0];
+	constexpr auto tdf2 = td.children[1];
+
+	constexpr bool same = tdf1 == tdf2;
+
+	constexpr auto urmom = podreader::meta::get_member_info<two>::values;
+
 	constexpr std::string_view tn = podreader::meta::typename_of<int>();
 
 	std::ifstream filestream("./data/test2.json");
