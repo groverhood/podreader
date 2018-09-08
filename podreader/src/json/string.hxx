@@ -62,6 +62,8 @@ namespace podreader
             string result;
 
             result.string_impl = new unsigned char[str.length() + sizeof(std::size_t)];
+
+            return result;
         }
 
 
