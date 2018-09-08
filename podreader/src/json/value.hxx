@@ -77,7 +77,10 @@ namespace podreader
 
 			inline ~value()
 			{
-				if (!moved && !reference && bytes) delete[] bytes;
+				if (!moved && !reference && bytes)
+				{
+					delete[] bytes;
+				}
 			}
 
 			template <typename T>
@@ -159,7 +162,7 @@ namespace podreader
 
 				for (std::size_t n = 0; n < index; ++n)
 				{
-					offset += std::max(type.children[n].size_of, type.align_of);
+					offset += std::max(type.children[n].size_of, type.children[n + 1].size_of);
 				}
 
 				val.bytes = bytes + offset;

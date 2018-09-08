@@ -10,7 +10,8 @@
   },
 
   "foo_rating": 10,
-  "fuck": 12,
+  "tuck": 12,
   "nice": 2,
-  "s": "hello, world"
+
+  "condition":  true
 }

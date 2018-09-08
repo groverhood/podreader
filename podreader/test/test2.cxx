@@ -14,8 +14,9 @@ struct two
 	foo f2;
 
 	int foo_rating;
-	double fuck;
+	double tuck;
 	short nice;
+	bool condition;
 
 };
 
@@ -28,6 +29,7 @@ int main()
 	two val;
 
 	std::ifstream filestream("test/data/test2.json");
+
 
 	filestream >> val;
 

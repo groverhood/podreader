@@ -18,11 +18,18 @@ namespace podreader
 			{
 				T t;
 				is >> t;
-				val = t;
+				val.assign(t);
 				return is;
 			}
 
-			
+			template <>
+			inline std::istream& read_v<bool>(std::istream& is, value& val)
+			{
+				std::string s;
+				is >> s;
+				val.assign(s == "true");
+				return is;
+			}
 
 			inline std::istream& read_T(std::istream& is, value& val)
 			{
@@ -170,11 +177,6 @@ namespace podreader
 
 					for (std::size_t n = 0; n < typeinfo.num_members; ++n)
 					{
-						if (n == 5)
-						{
-							int j = 2;
-						}
-
 						std::string s;
 						std::getline(stream, s, ':');
 						value v = val[n];
@@ -190,13 +192,17 @@ namespace podreader
 				result.zeroset();
 
 				evaluate_intern(result);
+
+				set = true;
 			}
 
 			T result_of() noexcept
 			{
 				if (!set) evaluate();
 
-				return result;
+				T res = result;
+
+				return res;
 			}
 		};
 
