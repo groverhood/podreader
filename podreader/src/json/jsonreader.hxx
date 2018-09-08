@@ -136,7 +136,7 @@ namespace podreader
 		}
 
 
-		template <typename T, typename Enable = typename std::enable_if<std::is_pod<T>::value and std::is_class<T>::value>::type>
+		template <typename T, typename Enable = typename std::enable_if<std::is_aggregate<T>::value and std::is_class<T>::value>::type>
 		class jsonreader
 		{
 		public:

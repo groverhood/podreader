@@ -65,7 +65,7 @@ namespace meta
 		using remove_cvr_t = typename std::remove_reference<typename std::remove_cv<T>::type>::type;
 	}
 
-	template <typename T, typename Enable = typename STL enable_if<STL is_pod<T>::value>::type>
+	template <typename T, typename Enable = typename STL enable_if<STL is_aggregate<T>::value or STL is_pod<T>::value>::type>
 	struct num_members
 	{
 		constexpr static STL size_t value = detail::find_num_members_pod<T>();
@@ -181,7 +181,7 @@ namespace meta
 	};
 	
 
-	template <typename T, typename Enable = typename STL enable_if<STL is_aggregate<T>::value>::type>
+	template <typename T, typename Enable = typename STL enable_if<STL is_aggregate<T>::value or STL is_pod<T>::value>::type>
 	struct get_member_info
 	{
 		constexpr static STL array<type_data, num_members<T>::value> values = member_info<T, STL is_class<T>::value>::values;
@@ -206,7 +206,7 @@ namespace meta
 		}
 	}
 
-	template <typename T, typename Enable = typename STL enable_if<STL is_aggregate<T>::value>::type>
+	template <typename T, typename Enable = typename STL enable_if<STL is_aggregate<T>::value or STL is_pod<T>::value>::type>
 	struct get_type_data
 	{
 		static constexpr type_data value =
@@ -226,4 +226,4 @@ namespace meta
 
 }
 
-#define typeof(t) (podreader::meta::get_type_data<t>::value)
+#define typeof(t) (podreader::meta::get_type_data<t, typename std::enable_if<std::is_aggregate<t>::value or std::is_pod<t>::value>::type>::value)
