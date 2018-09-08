@@ -46,13 +46,11 @@ namespace podreader
 			{
 				return chars() + length();
 			}
-
-
 		};
 
-		constexpr bool hmm = std::is_trivial<string>::value;
-		constexpr bool flip = std::is_standard_layout<string>::value;
-		constexpr bool good = std::is_aggregate<string>::value;
+
+
+
 
 	}
 }

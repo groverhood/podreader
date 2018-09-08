@@ -2,6 +2,7 @@
 
 #include <meta/meta.hxx>
 #include <utility>
+#include <cstring>
 
 namespace podreader
 {

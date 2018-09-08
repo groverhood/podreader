@@ -5,9 +5,9 @@
 #include <tuple>
 #include <type_traits>
 #include <array>
-#include <string_view>
 #include <vector>
 #include <functional>
+#include <string_view>
 
 #define STL ::std::
 
@@ -74,11 +74,17 @@ namespace meta
 	template <typename T>
 	constexpr STL string_view typename_of() noexcept
 	{
+#ifndef __GNUC__
 		constexpr STL string_view function_name = __FUNCSIG__;
 		constexpr STL size_t fst = function_name.find_first_of('<', 75);
 		constexpr STL size_t snd = function_name.find_last_of('>');
 		constexpr STL string_view result = function_name.substr(fst, snd - fst);
-
+#else
+		constexpr STL string_view function_name = __PRETTY_FUNCTION__;
+		constexpr STL size_t fst = function_name.find("T =") + sizeof("T =");
+		constexpr STL size_t snd = function_name.find(";");
+		constexpr STL string_view result = function_name.substr(fst, snd - fst);
+#endif
 		return result;
 	}
 
@@ -121,10 +127,10 @@ namespace meta
 		template <STL size_t N>
 		struct type_data_impl
 		{
-			type_data& type_data_ref = {};
+			type_data& type_data_ref;
 
 			template <typename U>
-			constexpr operator U() const noexcept;
+			constexpr operator U() noexcept;
 		};
 
 		template <typename T, STL size_t ...Ns>
@@ -184,7 +190,7 @@ namespace meta
 	{
 		template <STL size_t N>
 		template <typename U>
-		inline constexpr type_data_impl<N>::operator U() const noexcept
+		inline constexpr type_data_impl<N>::operator U() noexcept
 		{
 			type_data_ref.type_name = typename_of<U>();
 			type_data_ref.is_pod = STL is_pod<U>::value;
