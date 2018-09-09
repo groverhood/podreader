@@ -18,7 +18,7 @@ struct two
 	short nice;
 	bool condition;
 
-	std::string_view str;
+	podreader::json::cstring str;
 };
 
 #include <iostream>

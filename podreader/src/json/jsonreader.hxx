@@ -1,10 +1,12 @@
 #pragma once
 
 #include <json/value.hxx>
+#include <json/string.hxx>
 #include <istream>
 #include <ostream>
 #include <fstream>
 #include <string>
+#include <vector>
 
 namespace podreader
 {
@@ -147,6 +149,7 @@ namespace podreader
 
 			std::istream &stream;
 			value result;
+			std::vector<std::string> strs;
 
 			bool set;
 

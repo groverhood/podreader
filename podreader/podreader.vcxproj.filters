@@ -21,10 +21,13 @@
     <ClInclude Include="src\json\value.hxx">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="jsonreader.hxx">
+    <ClInclude Include="operator.hxx">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="operator.hxx">
+    <ClInclude Include="src\json\jsonreader.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\json\string.hxx">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
