@@ -33,12 +33,7 @@ struct two
 
 int main()
 {
-	constexpr auto sz = offsetof(two, pr);
-
-
-
 	using namespace podreader::json::operator_overloads;
-	sizeof(two);
 
 	two val;
 

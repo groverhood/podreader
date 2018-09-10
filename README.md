@@ -63,6 +63,5 @@ We will get the output "{ 1, 2, { 3.14, 12 }, 1.41 }"
 
 ## Planned Features
 
-Currently there is no support for strings, due to there being no safe string POD type that also manages 
-its own pointer, which is a must for file I/O. Outputting POD structs into .json files/strings is also 
+Currently there is no support for arrays. Outputting POD structs into .json files/strings is also 
 a feature I plan on adding soon.
