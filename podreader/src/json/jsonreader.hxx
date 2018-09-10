@@ -15,7 +15,7 @@ namespace podreader
 		namespace detail
 		{
 
-			template <typename T, typename Enable = STL enable_if_t<STL is_fundamental_v<T>>>
+			template <typename T, typename Enable = STL enable_if_t<STL is_fundamental_v<T> or STL is_same_v<T, cstring>>>
 			auto read_v(std::istream& is, value& val)
 			{
 				T t;
@@ -49,20 +49,6 @@ namespace podreader
 				unsigned char c;
 				is >> c;
 				std::getline(is, s, '"');
-
-				value &char_ptr = val[0];
-				value &len = val[1];
-
-				if (auto ptr = dynamic_cast<value_impl<const char *>*>(&val))
-				{
-
-				}
-
-				if (auto ptr = dynamic_cast<value_impl<std::size_t>*>(&len))
-				{
-
-				}
-
 				return s;
 			}
 
@@ -88,7 +74,7 @@ namespace podreader
 
 			explicit jsonreader(std::istream &stream)
 				: stream(stream),
-				result(new value_impl<T>(type)),
+				result(new value_impl<T>()),
 				set(false)
 			{}
 
@@ -101,26 +87,98 @@ namespace podreader
 
 			jsonreader(const jsonreader<T>& other) = delete;
 
-			void evaluate_raw(value *val)
+			void evaluate_raw(value &val)
 			{
-				if (val->type_of() == typeof(bool))
+				using namespace detail;
+
+				if (val.type_of() == typeof(bool))
 				{
+					read_v<bool>(stream, val);
+				}
+				else if (val.type_of() == typeof(char))
+				{
+					read_v<char>(stream, val);
+				}
+				else if (val.type_of() == typeof(signed char))
+				{
+					read_v<signed char>(stream, val);
+				}
+				else if (val.type_of() == typeof(unsigned char))
+				{
+					read_v<unsigned char>(stream, val);
+				}
+				else if (val.type_of() == typeof(short))
+				{
+					read_v<short>(stream, val);
+				}
+				else if (val.type_of() == typeof(unsigned short))
+				{
+					read_v<unsigned short>(stream, val);
+				}
+				else if (val.type_of() == typeof(int))
+				{
+					read_v<int>(stream, val);
+				}
+				else if (val.type_of() == typeof(unsigned int))
+				{
+					read_v<unsigned int>(stream, val);
+				}
+				else if (val.type_of() == typeof(long))
+				{
+					read_v<long>(stream, val);
+				}
+				else if (val.type_of() == typeof(unsigned long))
+				{
+					read_v<unsigned long>(stream, val);
+				}
+				else if (val.type_of() == typeof(long long))
+				{
+					read_v<long long>(stream, val);
+				}
+				else if (val.type_of() == typeof(unsigned long long))
+				{
+					read_v<unsigned long long>(stream, val);
+				}
+				else if (val.type_of() == typeof(float))
+				{
+					read_v<float>(stream, val);
+				}
+				else if (val.type_of() == typeof(double))
+				{
+					read_v<double>(stream, val);
+				}
+				else if (val.type_of() == typeof(long double))
+				{
+					read_v<long double>(stream, val);
+				}
+				else if (val.type_of() == typeof(cstring))
+				{
+					const std::size_t index = strs.size();
+					strs.push_back(read_v<cstring>(stream, val));
+					
+					const std::string& str = strs[index]; 
+					auto &c_str = dynamic_cast<value_impl<const char *>&>(val[0]);
+					auto &len = dynamic_cast<value_impl<std::size_t>&>(val[1]);
+
+					c_str.members = str.c_str();
+					len.members = str.length();
 
 				}
 			}
 
-			void evaluate_intern(value *val)
+			void evaluate_intern(value &val)
 			{
-				if (!val->type_of().is_struct || val->type_of() == typeof(cstring)) evaluate_raw(val);
+				if (!val.type_of().is_struct || val.type_of() == typeof(cstring)) evaluate_raw(val);
 
 				else
 				{
-					const type_data& typeinfo = val->type_of();
-					value &this_val = *val;
+					const type_data& typeinfo = val.type_of();
 
 					for (std::size_t n = 0; n < typeinfo.num_members; ++n)
 					{
-						evaluate_intern(&this_val[n]);
+						std::string s;
+						std::getline(stream, s, ':');
+						evaluate_intern(val[n]);
 					}
 				}
 			}
@@ -129,8 +187,7 @@ namespace podreader
 
 			void evaluate()
 			{
-
-				evaluate_intern(result);
+				evaluate_intern(*result);
 
 				set = true;
 			}

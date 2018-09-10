@@ -202,14 +202,14 @@ namespace meta
 			type_data_ref.children = get_member_info<U>::values.data();
 			type_data_ref.align_of = alignof(U);
 
-
-
 			if constexpr (std::is_pointer<U>::value)
 			{
 				return nullptr;
 			}
-
-			return U{};
+			else
+			{
+				return U{};
+			}
 		}
 	}
 

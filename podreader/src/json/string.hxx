@@ -9,8 +9,8 @@ namespace podreader
 		{
 			constexpr static std::size_t npos = static_cast<std::size_t>(-1);
 
-			const char* const str = nullptr;
-			const std::size_t len = npos;
+			const char* str = nullptr;
+			std::size_t len = npos;
 
 			constexpr cstring() noexcept = default;
 

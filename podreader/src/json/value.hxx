@@ -30,6 +30,9 @@ namespace podreader
 
 			}
 
+			virtual inline ~value()
+			{}
+
 			inline value(const type_data& type)
 				: type(type)
 			{
@@ -38,7 +41,7 @@ namespace podreader
 			template <typename T>
 			operator T() const
 			{
-				return get_value();
+				return get_value<T>();
 			}
 
 			const type_data& type_of() const noexcept
@@ -57,29 +60,48 @@ namespace podreader
 
 		};
 
+		template <typename T, typename Enable = std::enable_if_t<std::is_class_v<T>>>
+		std::array<value *, podreader::meta::num_members<T>::value> get_member_ptrs();
+
 		template <typename T>
 		struct value_impl : public value
 		{
-			using namespace podreader::meta
-
-			detail::either_t<std::is_class_v<T>, std::array<value, num_members<T>::value>, T> members;
+			podreader::meta::detail::either_t<std::is_class_v<T>, std::array<value*, podreader::meta::num_members<T>::value>, T> members;
 
 			value_impl()
 				: value(typeof(T))
 			{
+				if constexpr (std::is_class_v<T>)
+				{
+					members = get_member_ptrs<T>();
+				}
 			}
 
-			value_impl(std::enable_if_t<std::is_fundamental_v<T> || std::is_same_v<T, cstring>, const T&> other)
+			virtual inline ~value_impl()
+			{
+				if constexpr (std::is_class_v<T>)
+				{
+					for (auto &ptr : members)
+					{
+						delete ptr;
+					}
+				}
+			}
+
+			value_impl(const T& other)
 				: value(other)
 			{
-				members[0] = other;
+				if constexpr (std::is_fundamental_v<T> or std::is_same_v<T, cstring>)
+				{
+					members = other;
+				}
 			}
 
 			T get_value_impl() const
 			{
 				if constexpr (std::is_class_v<T>)
 				{
-					return make_value(std::make_index_sequence<num_members<T>::value>{});
+					return make_value(std::make_index_sequence<podreader::meta::num_members<T>::value>{});
 				}
 				else
 				{
@@ -94,7 +116,7 @@ namespace podreader
 			{
 				if constexpr (std::is_class_v<T>)
 				{
-					return T { members[Ns]... };
+					return T { *members[Ns]... };
 				}
 				else
 				{
@@ -108,19 +130,55 @@ namespace podreader
 			{
 				if constexpr (std::is_class_v<T>)
 				{
-					return members[index];
+					return *members[index];
 				}
 				else
 				{
-					return members;
+					return *this;
 				}
 			}
 
 		};
 
+		template <STL size_t N>
+		struct get_member_ptr
+		{
+			value *& ptr;
+
+			template <typename U>
+			operator U()
+			{
+				ptr = new value_impl<U>;
+
+				if constexpr (std::is_pointer<U>::value)
+				{
+					return nullptr;
+				}
+				else
+				{
+					return U{};
+				}
+			}
+		};
+
+		template <typename T, typename Enable, std::size_t ...Ns>
+		std::array<value *, podreader::meta::num_members<T>::value> get_member_ptrs(std::index_sequence<Ns...>)
+		{
+			std::array<value *, podreader::meta::num_members<T>::value> values = {};
+			T{ get_member_ptr<Ns>{ values[Ns] }... };
+			return values;
+		}
+
+		template <typename T, typename Enable>
+		std::array<value *, podreader::meta::num_members<T>::value> get_member_ptrs()
+		{
+			return get_member_ptrs<T, Enable>(std::make_index_sequence<podreader::meta::num_members<T>::value>{});
+		}
+
 		template<typename T>
 		T value::get_value() const
 		{
+			const type_data& to = typeof(T);
 			if (type == typeof(T))
 			{
 				return dynamic_cast<const value_impl<T>*>(this)->get_value_impl();
