@@ -12,7 +12,8 @@ namespace podreader
 			template <typename T>
 			std::istream& operator>>(std::istream &is, T &out)
 			{
-				out = jsonreader<T>(is).result_of();
+				T value = jsonreader<T>(is).result_of();
+				std::memcpy(&out, &value, sizeof out);
 				return is;
 			}
 		}

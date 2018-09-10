@@ -8,29 +8,39 @@ struct foo
 	int snd;
 };
 
+struct pair_si
+{
+	podreader::json::cstring str;
+	int rating;
+};
+
 struct two
 {
-	foo f1;
-	foo f2;
+	foo f1; // 8
+	foo f2; // 8
 
-	int foo_rating;
-	double tuck;
-	short nice;
-	bool condition;
+	int foo_rating; // 8
+	double tuck; // 8
+	int l; // 4
+	bool condition; // 4
 
-	podreader::json::cstring str;
+	pair_si pr; // 12
+
+	long last; // 4
 };
 
 #include <iostream>
 
 int main()
 {
+	constexpr auto sz = offsetof(two, pr);
+
+
+
 	using namespace podreader::json::operator_overloads;
+	sizeof(two);
 
 	two val;
-
-	constexpr auto td = typeof(two);
-
 
 	constexpr std::string_view tn = podreader::meta::typename_of<int>();
 

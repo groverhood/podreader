@@ -1,8 +1,10 @@
 #pragma once
 
 #include <meta/meta.hxx>
+#include <json/string.hxx>
 #include <utility>
 #include <cstring>
+#include <vector>
 
 namespace podreader
 {
@@ -21,166 +23,64 @@ namespace podreader
 			}
 		}
 
+		constexpr auto get_default(const type_data& type) noexcept
+		{
+
+		}
+
 		struct value
 		{
 		private:
 
-			bool moved;
-			bool reference = false;
-			bool string = false;
+			union member
+			{
+				bool bool_v;
 
-			unsigned char *bytes;
+				char char_v;
+				signed char schar_v;
+				unsigned char byte_v;
+
+				short short_v;
+				unsigned short ushort_v;
+
+				int int_v;
+				unsigned int uint_v;
+
+				long long long_v;
+				unsigned long long ulong_v;
+
+				float float_v;
+				double double_v;
+				long double ldouble_v;
+
+				cstring string_v;
+				value *object_v;
+			};
+
+			std::vector<member> members;
 
 			const type_data& type;
-			std::size_t align;
 
 		public:
 
 			template <typename T>
-			value(const T& val)
-				: moved(false),
-				bytes(detail::value_to_bytes(val, STL make_index_sequence<sizeof val>{})),
-				type(get_type_data<T>::value),
-				align(type.align_of)
-			{
-			}
-
-			inline value(const value& other)
-				: moved(false),
-				reference(other.reference),
-				bytes(reinterpret_cast<unsigned char*>(std::memcpy(new unsigned char[other.type.size_of], other.bytes, other.type.size_of))),
-				type(other.type),
-				align(other.type.align_of)
+			inline value(const T& val)
+				: type(typeof(T))
 			{
 
 			}
 
-			inline
-				value(value &&other) noexcept
-				: moved(false),
-				reference(other.reference),
-				bytes(other.bytes),
-				type(other.type),
-				align(other.type.align_of)
-			{
-				other.moved = true;
-			}
-
-			inline explicit
-				value(const type_data& type)
-				: moved(false),
-				bytes(nullptr),
-				type(type),
-				align(type.align_of)
+			inline value(const type_data& type)
+				: type(type)
 			{
 
-			}
-
-			inline ~value()
-			{
-				if (!moved && !reference && bytes)
-				{
-					delete[] bytes;
-				}
 			}
 
 			template <typename T>
-			operator const T&() const
+			inline operator T() const
 			{
-				if (type == get_type_data<T>::value)
-				{
-					return *reinterpret_cast<const T*>(bytes);
-				}
 
-				constexpr T* bad_ptr = nullptr;
-
-				return *bad_ptr;
 			}
-
-			template <typename T>
-			operator T&()
-			{
-				if (type == get_type_data<T>::value)
-				{
-					return *reinterpret_cast<T*>(bytes);
-				}
-
-				constexpr T* bad_ptr = nullptr;
-
-				return *bad_ptr;
-			}
-
-			inline const type_data& type_of() const noexcept
-			{
-				return type;
-			}
-
-			template <typename T>
-			void assign(const T& val)
-			{
-				if (bytes == nullptr)
-				{
-					bytes = new unsigned char[type.size_of];
-				}
-
-				if (type == typeof(T))
-				{
-					auto ptr = reinterpret_cast<const unsigned char*>(&val);
-					std::copy_n(ptr, sizeof val, bytes);
-				}
-			}
-
-			inline bool valueless() const noexcept
-			{
-				return !bytes;
-			}
-
-			inline void zeroset()
-			{
-				if (valueless()) bytes = new unsigned char[type.size_of]{ 0 };
-			}
-
-			// attribute getter
-			inline value operator[](std::size_t index)
-			{
-				if (!type.is_struct)
-				{
-					value *val = nullptr;
-					return *val;
-				}
-
-				if (bytes == nullptr)
-				{
-					bytes = new unsigned char[type.size_of];
-				}
-
-				value val = value(type.children[index]);
-
-				// view only
-				val.reference = true;
-
-				std::size_t offset = 0;
-
-				for (std::size_t n = 0; n < index; ++n)
-				{
-					offset += std::max(type.children[n].size_of, type.children[n + 1].size_of);
-				}
-
-				val.bytes = bytes + offset;
-
-				return val;
-			}
-
-			inline value& operator=(const value& other)
-			{
-				if (type == other.type)
-				{
-					std::copy_n(other.bytes, other.type.size_of, bytes);
-				}
-
-				return *this;
-			}
-
 
 		};
 

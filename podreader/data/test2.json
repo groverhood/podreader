@@ -12,7 +12,12 @@
   "foo_rating": 10,
   "tuck": 12,
   "nice": 2,
-
   "condition": true,
-  "strang":  "Hello, world!"
+
+  "pr": {
+    "str": "Hello, world!",
+    "rating": -100000
+  },
+
+  "last": 20
 }

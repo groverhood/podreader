@@ -62,7 +62,7 @@ namespace meta
 	namespace detail
 	{
 		template <typename T>
-		using remove_cvr_t = typename std::remove_reference<typename std::remove_cv<T>::type>::type;
+		using remove_cvr_t = typename STL remove_reference<typename STL remove_cv<T>::type>::type;
 	}
 
 	template <typename T, typename Enable = typename STL enable_if<STL is_aggregate<T>::value or STL is_pod<T>::value>::type>
@@ -105,7 +105,7 @@ namespace meta
 
 		STL size_t align_of = 0;
 
-		const type_data *children = nullptr;
+		const type_data * children = nullptr;
 
 		constexpr type_data() noexcept = default;
 
@@ -201,6 +201,8 @@ namespace meta
 			type_data_ref.size_of = sizeof(U);
 			type_data_ref.children = get_member_info<U>::values.data();
 			type_data_ref.align_of = alignof(U);
+
+
 
 			if constexpr (std::is_pointer<U>::value)
 			{
