@@ -15,12 +15,16 @@ namespace podreader
 		namespace detail
 		{
 
-			template <typename T>
+			template <typename T, typename Enable = STL enable_if_t<STL is_fundamental_v<T>>>
 			auto read_v(std::istream& is, value& val)
 			{
 				T t;
 				is >> t;
-				val.assign(t);
+
+				if (auto ptr = dynamic_cast<value_impl<T>*>(&val))
+				{
+					ptr->members = t;
+				}
 			}
 
 			template <>
@@ -31,7 +35,11 @@ namespace podreader
 				is >> c;
 				is.unget();
 				std::getline(is, s, ',');
-				val.assign(s == "true");
+
+				if (auto ptr = dynamic_cast<value_impl<bool>*>(&val))
+				{
+					ptr->members = (s == "true");
+				}
 			}
 
 			template <>
@@ -41,6 +49,20 @@ namespace podreader
 				unsigned char c;
 				is >> c;
 				std::getline(is, s, '"');
+
+				value &char_ptr = val[0];
+				value &len = val[1];
+
+				if (auto ptr = dynamic_cast<value_impl<const char *>*>(&val))
+				{
+
+				}
+
+				if (auto ptr = dynamic_cast<value_impl<std::size_t>*>(&len))
+				{
+
+				}
+
 				return s;
 			}
 
@@ -57,7 +79,7 @@ namespace podreader
 		private:
 
 			std::istream &stream;
-			value result;
+			value *result;
 			inline static std::vector<std::string> strs;
 
 			bool set;
@@ -66,29 +88,39 @@ namespace podreader
 
 			explicit jsonreader(std::istream &stream)
 				: stream(stream),
-				result(type),
+				result(new value_impl<T>(type)),
 				set(false)
 			{}
+
+			~jsonreader()
+			{
+				delete result;
+			}
 
 		private:
 
 			jsonreader(const jsonreader<T>& other) = delete;
 
-			void evaluate_raw(value &val)
+			void evaluate_raw(value *val)
 			{
+				if (val->type_of() == typeof(bool))
+				{
+
+				}
 			}
 
-			void evaluate_intern(value &val)
+			void evaluate_intern(value *val)
 			{
-				if (!val.type_of().is_struct || val.type_of() == typeof(cstring)) evaluate_raw(val);
+				if (!val->type_of().is_struct || val->type_of() == typeof(cstring)) evaluate_raw(val);
 
 				else
 				{
-					const type_data& typeinfo = val.type_of();
+					const type_data& typeinfo = val->type_of();
+					value &this_val = *val;
 
 					for (std::size_t n = 0; n < typeinfo.num_members; ++n)
 					{
-
+						evaluate_intern(&this_val[n]);
 					}
 				}
 			}
@@ -97,7 +129,6 @@ namespace podreader
 
 			void evaluate()
 			{
-				result.zeroset();
 
 				evaluate_intern(result);
 
@@ -108,7 +139,7 @@ namespace podreader
 			{
 				if (!set) evaluate();
 
-				T res = result;
+				T res = *result;
 
 				return res;
 			}

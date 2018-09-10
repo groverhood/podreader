@@ -5,6 +5,7 @@
 #include <utility>
 #include <cstring>
 #include <vector>
+#include <array>
 
 namespace podreader
 {
@@ -14,50 +15,9 @@ namespace podreader
 	namespace json
 	{
 
-		namespace detail
-		{
-			template <typename T, STL size_t ...Ns, typename Enable = typename STL enable_if<sizeof(T) == sizeof...(Ns)>::type>
-			unsigned char* value_to_bytes(const T& value, STL index_sequence<Ns...>)
-			{
-				return new unsigned char[sizeof value]{ reinterpret_cast<const unsigned char*>(&value)[Ns]... };
-			}
-		}
-
-		constexpr auto get_default(const type_data& type) noexcept
-		{
-
-		}
-
 		struct value
 		{
-		private:
-
-			union member
-			{
-				bool bool_v;
-
-				char char_v;
-				signed char schar_v;
-				unsigned char byte_v;
-
-				short short_v;
-				unsigned short ushort_v;
-
-				int int_v;
-				unsigned int uint_v;
-
-				long long long_v;
-				unsigned long long ulong_v;
-
-				float float_v;
-				double double_v;
-				long double ldouble_v;
-
-				cstring string_v;
-				value *object_v;
-			};
-
-			std::vector<member> members;
+		protected:
 
 			const type_data& type;
 
@@ -73,16 +33,101 @@ namespace podreader
 			inline value(const type_data& type)
 				: type(type)
 			{
-
 			}
 
 			template <typename T>
-			inline operator T() const
+			operator T() const
 			{
+				return get_value();
+			}
 
+			const type_data& type_of() const noexcept
+			{
+				return type;
+			}
+
+		private:
+
+			template <typename T>
+			T get_value() const;
+
+		public:
+
+			virtual value& operator[](std::size_t index) = 0;
+
+		};
+
+		template <typename T>
+		struct value_impl : public value
+		{
+			using namespace podreader::meta
+
+			detail::either_t<std::is_class_v<T>, std::array<value, num_members<T>::value>, T> members;
+
+			value_impl()
+				: value(typeof(T))
+			{
+			}
+
+			value_impl(std::enable_if_t<std::is_fundamental_v<T> || std::is_same_v<T, cstring>, const T&> other)
+				: value(other)
+			{
+				members[0] = other;
+			}
+
+			T get_value_impl() const
+			{
+				if constexpr (std::is_class_v<T>)
+				{
+					return make_value(std::make_index_sequence<num_members<T>::value>{});
+				}
+				else
+				{
+					return members;
+				}
+			}
+
+		private:
+
+			template <std::size_t ...Ns>
+			T make_value(std::index_sequence<Ns...>) const noexcept
+			{
+				if constexpr (std::is_class_v<T>)
+				{
+					return T { members[Ns]... };
+				}
+				else
+				{
+					return members;
+				}
+			}
+
+		public:
+
+			value& operator[](std::size_t index) override
+			{
+				if constexpr (std::is_class_v<T>)
+				{
+					return members[index];
+				}
+				else
+				{
+					return members;
+				}
 			}
 
 		};
+
+		template<typename T>
+		T value::get_value() const
+		{
+			if (type == typeof(T))
+			{
+				return dynamic_cast<const value_impl<T>*>(this)->get_value_impl();
+			}
+
+			return *reinterpret_cast<T*>(nullptr);
+		}
 
 	}
 }

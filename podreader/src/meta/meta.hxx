@@ -229,6 +229,29 @@ namespace meta
 		};
 	};
 
+	namespace detail
+	{
+		template <bool Condition, typename T1, typename T2>
+		struct either
+		{
+		};
+
+		template <typename T1, typename T2>
+		struct either<true, T1, T2>
+		{
+			using type = T1;
+		};
+
+		template <typename T1, typename T2>
+		struct either<false, T1, T2>
+		{
+			using type = T2;
+		};
+
+		template <bool Condition, typename T1, typename T2>
+		using either_t = typename either<Condition, T1, T2>::type;
+	}
+
 }
 
 }
