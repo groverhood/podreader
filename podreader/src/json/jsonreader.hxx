@@ -66,7 +66,7 @@ namespace podreader
 
 			std::istream &stream;
 			value *result;
-			inline static std::vector<std::string> strs;
+			inline static std::vector<std::string *> strs;
 
 			bool set;
 
@@ -154,9 +154,9 @@ namespace podreader
 				else if (val.type_of() == typeof(cstring))
 				{
 					const std::size_t index = strs.size();
-					strs.push_back(read_v<cstring>(stream, val));
+					strs.push_back(new std::string(read_v<cstring>(stream, val)));
 					
-					const std::string& str = strs[index]; 
+					const std::string& str = *strs[index]; 
 					auto &c_str = dynamic_cast<value_impl<const char *>&>(val[0]);
 					auto &len = dynamic_cast<value_impl<std::size_t>&>(val[1]);
 

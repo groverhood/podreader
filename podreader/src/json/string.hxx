@@ -55,6 +55,11 @@ namespace podreader
 				};
 #endif
 			}
+		
+			operator std::string() const
+			{
+				return std::string(this->str);
+			}
 		};
 	}
 }

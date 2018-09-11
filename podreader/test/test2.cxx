@@ -27,6 +27,8 @@ struct two
 	pair_si pr; // 12
 
 	long last; // 4
+
+	podreader::json::cstring urmom;
 };
 
 #include <iostream>
@@ -42,6 +44,7 @@ int main()
 	std::ifstream filestream("./data/test2.json");
 
 	filestream >> val;
+
 
 	return 0;
 }

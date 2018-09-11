@@ -251,7 +251,6 @@ namespace meta
 		template <bool Condition, typename T1, typename T2>
 		using either_t = typename either<Condition, T1, T2>::type;
 	}
-
 }
 
 }
