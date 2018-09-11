@@ -184,7 +184,8 @@ namespace podreader
 				return dynamic_cast<const value_impl<T>*>(this)->get_value_impl();
 			}
 
-			return *reinterpret_cast<T*>(nullptr);
+			T* bad_result_ptr = nullptr;
+			return *bad_result_ptr;
 		}
 
 	}

@@ -40,20 +40,11 @@ namespace podreader
 			{
 				std::size_t count = (len == npos) ? length() - off : len;
 
-#ifdef __GNUC__
-				return cstring
-				{
-					npos, // wtf g++
-					str + off,
-					len
-				};
-#else
 				return cstring
 				{
 					str + off,
 					len
 				};
-#endif
 			}
 		
 			operator std::string() const
